@@ -2,7 +2,6 @@ package com.example.simpleui;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,17 +40,17 @@ public class MainActivity extends Activity {
 				send();
 			}
 		});
-		
+
 		editText.setOnKeyListener(new OnKeyListener() {
-			
+
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if (keyCode == KeyEvent.KEYCODE_ENTER && 
-						event.getAction() == KeyEvent.ACTION_DOWN) {
+				if (keyCode == KeyEvent.KEYCODE_ENTER
+						&& event.getAction() == KeyEvent.ACTION_DOWN) {
 					send();
 					return true;
 				}
-				
+
 				return false;
 			}
 		});
@@ -59,6 +58,11 @@ public class MainActivity extends Activity {
 
 	private void send() {
 		String text = editText.getText().toString();
+
+		if (checkBox.isChecked() || text.contains("fuck")) {
+			text = "*******";
+		}
+		
 		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 		editText.setText("");
 	}
