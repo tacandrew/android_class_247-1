@@ -3,10 +3,12 @@ package com.example.simpleui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -37,6 +39,20 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				send();
+			}
+		});
+		
+		editText.setOnKeyListener(new OnKeyListener() {
+			
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if (keyCode == KeyEvent.KEYCODE_ENTER && 
+						event.getAction() == KeyEvent.ACTION_DOWN) {
+					send();
+					return true;
+				}
+				
+				return false;
 			}
 		});
 	}
