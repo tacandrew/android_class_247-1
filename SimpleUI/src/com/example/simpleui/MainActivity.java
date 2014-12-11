@@ -16,9 +16,17 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
 	private EditText editText;
-	private Button button;
+	private Button button, button3;
 	private CheckBox checkBox;
 
+	OnClickListener onClickListener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			send();
+		}
+	};
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -31,8 +39,9 @@ public class MainActivity extends Activity {
 
 		editText = (EditText) findViewById(R.id.editText1);
 		button = (Button) findViewById(R.id.button1);
+		button3 = (Button) findViewById(R.id.button3);
 		checkBox = (CheckBox) findViewById(R.id.checkBox1);
-
+		
 		button.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -41,6 +50,8 @@ public class MainActivity extends Activity {
 			}
 		});
 
+		button3.setOnClickListener(onClickListener);
+		
 		editText.setOnKeyListener(new OnKeyListener() {
 
 			@Override
@@ -67,6 +78,10 @@ public class MainActivity extends Activity {
 		editText.setText("");
 	}
 
+	public void onClick(View view) {
+		send();
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
