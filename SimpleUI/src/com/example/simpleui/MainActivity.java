@@ -1,6 +1,8 @@
 package com.example.simpleui;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -18,7 +20,9 @@ public class MainActivity extends Activity {
 	private EditText editText;
 	private Button button, button3;
 	private CheckBox checkBox;
-
+	private SharedPreferences sp;
+	private SharedPreferences.Editor editor;
+	
 	OnClickListener onClickListener = new OnClickListener() {
 
 		@Override
@@ -37,6 +41,9 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		sp = getSharedPreferences("settings", Context.MODE_PRIVATE);
+		editor = sp.edit();
+		
 		editText = (EditText) findViewById(R.id.editText1);
 		button = (Button) findViewById(R.id.button1);
 		button3 = (Button) findViewById(R.id.button3);
@@ -56,6 +63,9 @@ public class MainActivity extends Activity {
 
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				editor.putString("text", editText.getText().toString());
+				editor.commit();
+				
 				if (keyCode == KeyEvent.KEYCODE_ENTER
 						&& event.getAction() == KeyEvent.ACTION_DOWN) {
 					send();
