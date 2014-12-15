@@ -12,6 +12,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -59,6 +61,17 @@ public class MainActivity extends Activity {
 
 		button3.setOnClickListener(onClickListener);
 		
+		checkBox.setChecked(sp.getBoolean("checkbox", false));
+		checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				editor.putBoolean("checkbox", isChecked);
+				editor.commit();
+			}
+		});
+		
+		editText.setText(sp.getString("text", ""));
 		editText.setOnKeyListener(new OnKeyListener() {
 
 			@Override
