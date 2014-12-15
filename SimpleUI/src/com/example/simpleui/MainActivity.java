@@ -2,6 +2,7 @@ package com.example.simpleui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -99,6 +100,10 @@ public class MainActivity extends Activity {
 		
 		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 		editText.setText("");
+		
+		Intent intent = new Intent();
+		intent.setClass(this, MessageActivity.class);
+		startActivity(intent);
 	}
 
 	public void onClick(View view) {
