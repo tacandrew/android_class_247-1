@@ -71,6 +71,14 @@ public class MessageActivity extends Activity {
 		int[] to = new int[] { R.id.messageTextView, R.id.datatimeTextView };
 		SimpleAdapter adapter = new SimpleAdapter(this, data,
 				R.layout.listview_item, from, to);
+
+		/* 
+		 * use android's layout 
+		int[] to = new int[] { android.R.id.text1, android.R.id.text2 };
+		SimpleAdapter adapter = new SimpleAdapter(this, data,
+				android.R.layout.simple_list_item_2, from, to);
+		*/
+		
 		listView.setAdapter(adapter);
 
 	}
