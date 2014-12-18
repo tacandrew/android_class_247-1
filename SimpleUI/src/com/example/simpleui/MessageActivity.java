@@ -15,5 +15,10 @@ public class MessageActivity extends Activity {
 		setContentView(R.layout.activity_message);
 	
 		textView = (TextView) findViewById(R.id.textView1);
+		
+		String text = getIntent().getStringExtra("text");
+		boolean isChecked = getIntent().getBooleanExtra("checkbox", false);
+		
+		textView.setText(text);
 	}
 }
