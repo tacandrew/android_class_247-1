@@ -1,8 +1,11 @@
 package com.example.simpleui;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,8 +28,8 @@ public class MessageActivity extends Activity {
 		String text = getIntent().getStringExtra("text");
 		boolean isChecked = getIntent().getBooleanExtra("checkbox", false);
 		
-		textView.setText(text);		
 		writeToFile(text);
+		textView.setText(readFile());		
 	}
 	
 	private void writeToFile(String text) {
@@ -41,5 +44,26 @@ public class MessageActivity extends Activity {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	private String readFile() {
+		
+		try {
+			FileInputStream fis = openFileInput(FILE_NAME);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+			
+			String line = null;
+			String result = "";
+			while( (line = br.readLine()) != null ) {
+				result += line + "\n";				
+			}
+			return result;
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
