@@ -6,12 +6,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 public class MessageActivity extends Activity {
 
@@ -39,6 +44,20 @@ public class MessageActivity extends Activity {
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, messages);
 		listView.setAdapter(adapter);
+	}
+	
+	private void setListViewData2() {
+		String allText = readFile();
+		String[] messages = allText.split("\n");
+		String[] messageDatetime = new String[messages.length];
+		
+		for (int i = 0 ; i < messageDatetime.length;i++) {
+			messageDatetime[i] = new Date().toString();
+		}
+		
+//		SimpleAdapter adapter = new SimpleAdapter(this, data, resource, from, to);
+//		listView.setAdapter(adapter);
+		
 	}
 
 	private void writeToFile(String text) {
