@@ -50,10 +50,6 @@ public class MainActivity extends Activity {
 		Parse.initialize(this, "xFjWt1sp1ewmSVX0xEr1yODF7Q81xYELghV0GXwN",
 				"kzL2psN9bd3CGmZLHPwjcwrSuoM5APCXnjcw0w1p");
 
-		ParseObject testObject = new ParseObject("TestObject");
-		testObject.put("foo", "bar");
-		testObject.saveInBackground();
-
 		setContentView(R.layout.activity_main);
 
 		sp = getSharedPreferences("settings", Context.MODE_PRIVATE);
@@ -111,6 +107,11 @@ public class MainActivity extends Activity {
 			text = "*******";
 		}
 
+		ParseObject messageObject = new ParseObject("Message");
+		messageObject.put("text", text);
+		messageObject.put("checkbox", checkBox.isChecked());
+		messageObject.saveInBackground();
+		
 		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 		editText.setText("");
 
