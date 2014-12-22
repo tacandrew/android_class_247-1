@@ -12,9 +12,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.parse.FindCallback;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseException;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -35,11 +41,43 @@ public class MessageActivity extends Activity {
 		String text = getIntent().getStringExtra("text");
 		boolean isChecked = getIntent().getBooleanExtra("checkbox", false);
 
-		writeToFile(text);
-//		setListViewData();
-		setListViewData2();
+		// writeToFile(text);
+		// setListViewData();
+		// setListViewData2();
+
+		queryDataFromParse();
 	}
-	
+
+	private void queryDataFromParse() {
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Message");
+		query.findInBackground(new FindCallback<ParseObject>() {
+			public void done(List<ParseObject> messages, ParseException e) {
+				String[] textList = new String[messages.size()];
+				String[] datatimeList = new String[messages.size()];
+
+				for (int i = 0; i < messages.size(); i++) {
+					textList[i] = messages.get(i).getString("text");
+					datatimeList[i] = messages.get(i).getCreatedAt().toString();
+				}
+				List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+				for (int i = 0; i < messages.size(); i++) {
+					Map<String, String> item = new HashMap<String, String>();
+					item.put("message", textList[i]);
+					item.put("datetime", datatimeList[i]);
+					data.add(item);
+				}
+
+				String[] from = new String[] { "message", "datetime" };
+				int[] to = new int[] { R.id.messageTextView,
+						R.id.datatimeTextView };
+				SimpleAdapter adapter = new SimpleAdapter(MessageActivity.this,
+						data, R.layout.listview_item, from, to);
+
+				listView.setAdapter(adapter);
+			}
+		});
+
+	}
 
 	private void setListViewData() {
 		String allText = readFile();
@@ -72,15 +110,13 @@ public class MessageActivity extends Activity {
 		SimpleAdapter adapter = new SimpleAdapter(this, data,
 				R.layout.listview_item, from, to);
 
-		/* 
-		 * use android's layout 
-		int[] to = new int[] { android.R.id.text1, android.R.id.text2 };
-		SimpleAdapter adapter = new SimpleAdapter(this, data,
-				android.R.layout.simple_list_item_2, from, to);
-		*/
-		
-		listView.setAdapter(adapter);
+		/*
+		 * use android's layout int[] to = new int[] { android.R.id.text1,
+		 * android.R.id.text2 }; SimpleAdapter adapter = new SimpleAdapter(this,
+		 * data, android.R.layout.simple_list_item_2, from, to);
+		 */
 
+		listView.setAdapter(adapter);
 	}
 
 	private void writeToFile(String text) {
