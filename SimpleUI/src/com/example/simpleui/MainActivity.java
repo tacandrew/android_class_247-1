@@ -1,5 +1,8 @@
 package com.example.simpleui;
 
+import com.parse.Parse;
+import com.parse.ParseObject;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +28,7 @@ public class MainActivity extends Activity {
 	private CheckBox checkBox;
 	private SharedPreferences sp;
 	private SharedPreferences.Editor editor;
-	
+
 	OnClickListener onClickListener = new OnClickListener() {
 
 		@Override
@@ -33,7 +36,7 @@ public class MainActivity extends Activity {
 			send();
 		}
 	};
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -42,16 +45,25 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		Parse.enableLocalDatastore(this);
+		Parse.initialize(this, "xFjWt1sp1ewmSVX0xEr1yODF7Q81xYELghV0GXwN",
+				"kzL2psN9bd3CGmZLHPwjcwrSuoM5APCXnjcw0w1p");
+
+		ParseObject testObject = new ParseObject("TestObject");
+		testObject.put("foo", "bar");
+		testObject.saveInBackground();
+
 		setContentView(R.layout.activity_main);
 
 		sp = getSharedPreferences("settings", Context.MODE_PRIVATE);
 		editor = sp.edit();
-		
+
 		editText = (EditText) findViewById(R.id.editText1);
 		button = (Button) findViewById(R.id.button1);
 		button3 = (Button) findViewById(R.id.button3);
 		checkBox = (CheckBox) findViewById(R.id.checkBox1);
-		
+
 		button.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -61,17 +73,18 @@ public class MainActivity extends Activity {
 		});
 
 		button3.setOnClickListener(onClickListener);
-		
+
 		checkBox.setChecked(sp.getBoolean("checkbox", false));
 		checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
+
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
 				editor.putBoolean("checkbox", isChecked);
 				editor.commit();
 			}
 		});
-		
+
 		editText.setText(sp.getString("text", ""));
 		editText.setOnKeyListener(new OnKeyListener() {
 
@@ -79,7 +92,7 @@ public class MainActivity extends Activity {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				editor.putString("text", editText.getText().toString());
 				editor.commit();
-				
+
 				if (keyCode == KeyEvent.KEYCODE_ENTER
 						&& event.getAction() == KeyEvent.ACTION_DOWN) {
 					send();
@@ -97,10 +110,10 @@ public class MainActivity extends Activity {
 		if (checkBox.isChecked() || text.contains("fuck")) {
 			text = "*******";
 		}
-		
+
 		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 		editText.setText("");
-		
+
 		Intent intent = new Intent();
 		intent.setClass(this, MessageActivity.class);
 		intent.putExtra("text", text);
@@ -111,7 +124,7 @@ public class MainActivity extends Activity {
 	public void onClick(View view) {
 		send();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
