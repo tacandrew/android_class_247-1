@@ -59,26 +59,13 @@ public class MessageActivity extends Activity {
 					textList[i] = messages.get(i).getString("text");
 					datatimeList[i] = messages.get(i).getCreatedAt().toString();
 				}
-				List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-				for (int i = 0; i < messages.size(); i++) {
-					Map<String, String> item = new HashMap<String, String>();
-					item.put("message", textList[i]);
-					item.put("datetime", datatimeList[i]);
-					data.add(item);
-				}
-
-				String[] from = new String[] { "message", "datetime" };
-				int[] to = new int[] { R.id.messageTextView,
-						R.id.datatimeTextView };
-				SimpleAdapter adapter = new SimpleAdapter(MessageActivity.this,
-						data, R.layout.listview_item, from, to);
-
-				listView.setAdapter(adapter);
+				setListViewDataWithSimpleAdapter(textList, datatimeList);				
 			}
 		});
 
 	}
 
+	@SuppressWarnings("unused")
 	private void setListViewData() {
 		String allText = readFile();
 		String[] messages = allText.split("\n");
@@ -88,11 +75,20 @@ public class MessageActivity extends Activity {
 		listView.setAdapter(adapter);
 	}
 
-	private void setListViewData2() {
+	@SuppressWarnings("unused")
+	private void setListViewDataWithSimpleAdapter() {
 		String allText = readFile();
 		String[] messages = allText.split("\n");
 		String[] messageDatetime = new String[messages.length];
 
+		for (int i = 0; i < messageDatetime.length; i++) {
+			messageDatetime[i] = new Date().toString();
+		}
+
+		setListViewDataWithSimpleAdapter(messages, messageDatetime);
+	}
+	
+	private void setListViewDataWithSimpleAdapter(String[] messages, String[] messageDatetime) {
 		for (int i = 0; i < messageDatetime.length; i++) {
 			messageDatetime[i] = new Date().toString();
 		}
@@ -118,6 +114,7 @@ public class MessageActivity extends Activity {
 
 		listView.setAdapter(adapter);
 	}
+
 
 	private void writeToFile(String text) {
 		try {
