@@ -58,6 +58,8 @@ public class MessageActivity extends Activity {
 				for (int i = 0; i < messages.size(); i++) {
 					textList[i] = messages.get(i).getString("text");
 					datatimeList[i] = messages.get(i).getCreatedAt().toString();
+					
+					Log.d("debug", messages.get(i).getCreatedAt().toString());
 				}
 				setListViewDataWithSimpleAdapter(textList, datatimeList);				
 			}
@@ -89,10 +91,6 @@ public class MessageActivity extends Activity {
 	}
 	
 	private void setListViewDataWithSimpleAdapter(String[] messages, String[] messageDatetime) {
-		for (int i = 0; i < messageDatetime.length; i++) {
-			messageDatetime[i] = new Date().toString();
-		}
-
 		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 		for (int i = 0; i < messages.length; i++) {
 			Map<String, String> item = new HashMap<String, String>();
