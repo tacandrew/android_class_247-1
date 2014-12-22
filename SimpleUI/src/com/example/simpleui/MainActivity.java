@@ -3,6 +3,7 @@ package com.example.simpleui;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.PushService;
 import com.parse.SaveCallback;
 
 import android.app.Activity;
@@ -54,7 +55,8 @@ public class MainActivity extends Activity {
 		Parse.enableLocalDatastore(this);
 		Parse.initialize(this, "xFjWt1sp1ewmSVX0xEr1yODF7Q81xYELghV0GXwN",
 				"kzL2psN9bd3CGmZLHPwjcwrSuoM5APCXnjcw0w1p");
-
+		PushService.setDefaultPushCallback(this, MainActivity.class);
+		
 		setContentView(R.layout.activity_main);
 
 		sp = getSharedPreferences("settings", Context.MODE_PRIVATE);
