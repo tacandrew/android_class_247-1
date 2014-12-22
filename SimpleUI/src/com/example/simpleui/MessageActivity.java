@@ -22,7 +22,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -50,6 +49,7 @@ public class MessageActivity extends Activity {
 
 	private void queryDataFromParse() {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Message");
+		query.orderByDescending("createdAt");
 		query.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> messages, ParseException e) {
 				String[] textList = new String[messages.size()];
@@ -116,6 +116,7 @@ public class MessageActivity extends Activity {
 	}
 
 
+	@SuppressWarnings("unused")
 	private void writeToFile(String text) {
 		try {
 			text += "\n";

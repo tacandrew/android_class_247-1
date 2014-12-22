@@ -6,6 +6,7 @@ import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,7 +32,8 @@ public class MainActivity extends Activity {
 	private CheckBox checkBox;
 	private SharedPreferences sp;
 	private SharedPreferences.Editor editor;
-
+	private ProgressDialog progress;
+	
 	OnClickListener onClickListener = new OnClickListener() {
 
 		@Override
@@ -58,6 +60,8 @@ public class MainActivity extends Activity {
 		sp = getSharedPreferences("settings", Context.MODE_PRIVATE);
 		editor = sp.edit();
 
+		progress = new ProgressDialog(this);
+		
 		editText = (EditText) findViewById(R.id.editText1);
 		button = (Button) findViewById(R.id.button1);
 		button3 = (Button) findViewById(R.id.button3);
@@ -104,25 +108,37 @@ public class MainActivity extends Activity {
 	}
 
 	private void send() {
-		String text = editText.getText().toString();
+		progress.setTitle("Loading ...");
+		progress.show();
+		
+		final String text;
 
-		if (checkBox.isChecked() || text.contains("fuck")) {
+		if (checkBox.isChecked() || editText.getText().toString().contains("fuck")) {
 			text = "*******";
+		} else {
+			text = editText.getText().toString();
 		}
 
+		editText.setText("");
+		
 		ParseObject messageObject = new ParseObject("Message");
 		messageObject.put("text", text);
 		messageObject.put("checkbox", checkBox.isChecked());
-		messageObject.saveInBackground();
+		messageObject.saveInBackground(new SaveCallback() {
+			
+			@Override
+			public void done(ParseException e) {
+				progress.dismiss();
+				Intent intent = new Intent();
+				intent.setClass(MainActivity.this, MessageActivity.class);
+				intent.putExtra("text", text);
+				intent.putExtra("checkbox", checkBox.isChecked());
+				startActivity(intent);				
+			}
+		});
 		
-		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-		editText.setText("");
+//		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 
-		Intent intent = new Intent();
-		intent.setClass(this, MessageActivity.class);
-		intent.putExtra("text", text);
-		intent.putExtra("checkbox", checkBox.isChecked());
-		startActivity(intent);
 	}
 
 	public void onClick(View view) {
