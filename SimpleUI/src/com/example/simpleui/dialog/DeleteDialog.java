@@ -13,7 +13,7 @@ import android.content.Intent;
 public class DeleteDialog {
 
 	
-	public static AlertDialog create(final Context context, final ParseObject parseObject, final DeleteCallback cb) {
+	public static AlertDialog create(final Context context, final ParseObject parseObject) {
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		
@@ -22,9 +22,14 @@ public class DeleteDialog {
 		builder.setPositiveButton("delete", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				parseObject.deleteInBackground(cb);
+				parseObject.deleteInBackground(new DeleteCallback() {
+					
+					@Override
+					public void done(ParseException e) {
+						context.sendBroadcast(new Intent("com.example.simpleui.delete"));
+					}
+				});
 				
-				context.sendBroadcast(new Intent("com.example.simpleui.delete"));
 			}
 		});
 		

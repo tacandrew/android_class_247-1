@@ -21,7 +21,10 @@ import com.parse.ParseException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,18 +33,24 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 public class MessageActivity extends Activity {
 
 	private static final String FILE_NAME = "history.txt";
 	private ListView listView;
 	private List<ParseObject> messages;
+	private DeleteReceiver deleteReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_message);
+
+		deleteReceiver = new DeleteReceiver();
+		registerReceiver(deleteReceiver, new IntentFilter(
+				"com.example.simpleui.delete"));
 
 		listView = (ListView) findViewById(R.id.listView1);
 		String text = getIntent().getStringExtra("text");
@@ -60,20 +69,18 @@ public class MessageActivity extends Activity {
 					int position, long id) {
 				Log.d("debug", "position:" + position);
 
-				AlertDialog dialog = DeleteDialog.create(
-						MessageActivity.this,
-						messages.get(position), 
-						new DeleteCallback() {
+				AlertDialog dialog = DeleteDialog.create(MessageActivity.this,
+						messages.get(position));
 
-							@Override
-							public void done(ParseException e) {
-								queryDataFromParse();
-							}
-						});
 				dialog.show();
 			}
 		});
+	}
 
+	@Override
+	protected void onDestroy() {
+		unregisterReceiver(deleteReceiver);
+		super.onDestroy();
 	}
 
 	private void queryDataFromParse() {
@@ -181,4 +188,17 @@ public class MessageActivity extends Activity {
 		}
 		return null;
 	}
+
+	public class DeleteReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			Toast.makeText(context,
+					"delete successfully [from DeleteReceiver inner]",
+					Toast.LENGTH_SHORT).show();
+			queryDataFromParse();
+		}
+	}
+
 }
