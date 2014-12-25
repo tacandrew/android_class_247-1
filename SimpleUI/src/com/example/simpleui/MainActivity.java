@@ -1,10 +1,8 @@
 package com.example.simpleui;
 
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
-import com.parse.PushService;
 import com.parse.SaveCallback;
 
 import android.app.Activity;
@@ -25,7 +23,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -53,11 +50,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Parse.enableLocalDatastore(this);
-		Parse.initialize(this, "xFjWt1sp1ewmSVX0xEr1yODF7Q81xYELghV0GXwN",
-				"kzL2psN9bd3CGmZLHPwjcwrSuoM5APCXnjcw0w1p");
-		PushService.setDefaultPushCallback(this, MainActivity.class);
-		ParsePush.subscribeInBackground("all");
+		Log.d("debug", "MainActivity onCreate");
 		
 		setContentView(R.layout.activity_main);
 
