@@ -67,6 +67,14 @@
                 <category android:name="com.example.simpleui" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".broadcast.DeleteReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.example.simpleui.delete" />
+            </intent-filter>
+            
+        </receiver>
     </application>
 
 </manifest>
