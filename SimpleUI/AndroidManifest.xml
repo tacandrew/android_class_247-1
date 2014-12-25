@@ -70,7 +70,9 @@
         <receiver
             android:name=".broadcast.SimpleUIReceiver"
             android:exported="false" >
-            
+            <intent-filter>
+                <action android:name="com.example.simpleui.push" />
+            </intent-filter>
         </receiver>
     </application>
 

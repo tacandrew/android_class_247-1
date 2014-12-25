@@ -94,8 +94,6 @@ public class MessageActivity extends Activity {
 				for (int i = 0; i < messages.size(); i++) {
 					textList[i] = messages.get(i).getString("text");
 					datatimeList[i] = messages.get(i).getCreatedAt().toString();
-
-					Log.d("debug", messages.get(i).getCreatedAt().toString());
 				}
 				setListViewDataWithSimpleAdapter(textList, datatimeList);
 			}
