@@ -68,11 +68,8 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".broadcast.DeleteReceiver"
+            android:name=".broadcast.SimpleUIReceiver"
             android:exported="false" >
-            <intent-filter>
-                <action android:name="com.example.simpleui.delete" />
-            </intent-filter>
             
         </receiver>
     </application>

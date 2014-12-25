@@ -16,6 +16,7 @@ public class DeleteDialog {
 	public static AlertDialog create(final Context context, final ParseObject parseObject) {
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		final String deleteMessage = parseObject.getString("text");		
 		
 		builder.setTitle("Delete Message");
 		builder.setMessage("Do you really want to delete message ?");
@@ -26,7 +27,10 @@ public class DeleteDialog {
 					
 					@Override
 					public void done(ParseException e) {
-						context.sendBroadcast(new Intent("com.example.simpleui.delete"));
+
+						Intent intent = new Intent("com.example.simpleui.delete");
+						intent.putExtra("deleteMessage", deleteMessage);						
+						context.sendBroadcast(intent);
 					}
 				});
 				

@@ -40,7 +40,7 @@ public class MessageActivity extends Activity {
 	private static final String FILE_NAME = "history.txt";
 	private ListView listView;
 	private List<ParseObject> messages;
-	private DeleteReceiver deleteReceiver;
+	private MessageActivityReceiver receiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +48,8 @@ public class MessageActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_message);
 
-		deleteReceiver = new DeleteReceiver();
-		registerReceiver(deleteReceiver, new IntentFilter(
+		receiver = new MessageActivityReceiver();
+		registerReceiver(receiver, new IntentFilter(
 				"com.example.simpleui.delete"));
 
 		listView = (ListView) findViewById(R.id.listView1);
@@ -67,8 +67,6 @@ public class MessageActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> adapter, View view,
 					int position, long id) {
-				Log.d("debug", "position:" + position);
-
 				AlertDialog dialog = DeleteDialog.create(MessageActivity.this,
 						messages.get(position));
 
@@ -79,7 +77,7 @@ public class MessageActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		unregisterReceiver(deleteReceiver);
+		unregisterReceiver(receiver);
 		super.onDestroy();
 	}
 
@@ -189,15 +187,28 @@ public class MessageActivity extends Activity {
 		return null;
 	}
 
-	public class DeleteReceiver extends BroadcastReceiver {
+	public class MessageActivityReceiver extends BroadcastReceiver {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 
-			Toast.makeText(context,
-					"delete successfully [from DeleteReceiver inner]",
-					Toast.LENGTH_SHORT).show();
-			queryDataFromParse();
+			String action = intent.getAction();
+
+			if (action.equals("com.example.simpleui.delete")) {
+
+				String deleteMessage = intent.getStringExtra("deleteMessage");
+
+				Toast.makeText(
+						context,
+						"delete successfully. data:" + deleteMessage
+								+ "[from DeleteReceiver inner]",
+						Toast.LENGTH_SHORT).show();
+				queryDataFromParse();
+			} else if (action.equals("com.example.simpleui.add")) {
+				Toast.makeText(context, "new data [from DeleteReceiver inner]",
+						Toast.LENGTH_SHORT).show();
+				queryDataFromParse();
+			}
 		}
 	}
 
