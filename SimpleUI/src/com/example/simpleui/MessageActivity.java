@@ -12,15 +12,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.simpleui.dialog.DeleteDialog;
 import com.parse.FindCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -45,6 +50,18 @@ public class MessageActivity extends Activity {
 		// setListViewData2();
 
 		queryDataFromParse();
+		
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> adapter, View view, int position,
+					long id) {
+				Log.d("debug", "position:" + position);
+				AlertDialog dialog = DeleteDialog.create(MessageActivity.this);
+				dialog.show();
+			}
+		});
+		
 	}
 
 	private void queryDataFromParse() {
