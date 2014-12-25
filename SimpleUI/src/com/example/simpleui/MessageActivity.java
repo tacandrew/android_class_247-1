@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.simpleui.dialog.DeleteDialog;
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -34,6 +35,7 @@ public class MessageActivity extends Activity {
 
 	private static final String FILE_NAME = "history.txt";
 	private ListView listView;
+	private List<ParseObject> messages;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,18 +52,28 @@ public class MessageActivity extends Activity {
 		// setListViewData2();
 
 		queryDataFromParse();
-		
+
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> adapter, View view, int position,
-					long id) {
+			public void onItemClick(AdapterView<?> adapter, View view,
+					int position, long id) {
 				Log.d("debug", "position:" + position);
-				AlertDialog dialog = DeleteDialog.create(MessageActivity.this);
+
+				AlertDialog dialog = DeleteDialog.create(
+						MessageActivity.this,
+						messages.get(position), 
+						new DeleteCallback() {
+
+							@Override
+							public void done(ParseException e) {
+								queryDataFromParse();
+							}
+						});
 				dialog.show();
 			}
 		});
-		
+
 	}
 
 	private void queryDataFromParse() {
@@ -69,16 +81,18 @@ public class MessageActivity extends Activity {
 		query.orderByDescending("createdAt");
 		query.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> messages, ParseException e) {
+				MessageActivity.this.messages = messages;
+
 				String[] textList = new String[messages.size()];
 				String[] datatimeList = new String[messages.size()];
 
 				for (int i = 0; i < messages.size(); i++) {
 					textList[i] = messages.get(i).getString("text");
 					datatimeList[i] = messages.get(i).getCreatedAt().toString();
-					
+
 					Log.d("debug", messages.get(i).getCreatedAt().toString());
 				}
-				setListViewDataWithSimpleAdapter(textList, datatimeList);				
+				setListViewDataWithSimpleAdapter(textList, datatimeList);
 			}
 		});
 
@@ -106,8 +120,9 @@ public class MessageActivity extends Activity {
 
 		setListViewDataWithSimpleAdapter(messages, messageDatetime);
 	}
-	
-	private void setListViewDataWithSimpleAdapter(String[] messages, String[] messageDatetime) {
+
+	private void setListViewDataWithSimpleAdapter(String[] messages,
+			String[] messageDatetime) {
 		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 		for (int i = 0; i < messages.length; i++) {
 			Map<String, String> item = new HashMap<String, String>();
@@ -129,7 +144,6 @@ public class MessageActivity extends Activity {
 
 		listView.setAdapter(adapter);
 	}
-
 
 	@SuppressWarnings("unused")
 	private void writeToFile(String text) {
