@@ -12,29 +12,44 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.simpleui.dialog.DeleteDialog;
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 public class MessageActivity extends Activity {
 
 	private static final String FILE_NAME = "history.txt";
 	private ListView listView;
+	private List<ParseObject> messages;
+	private DeleteReceiver deleteReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_message);
+		deleteReceiver = new DeleteReceiver();
+		registerReceiver(deleteReceiver, new IntentFilter(
+				"com.example.simpleui.delete.inner"));
 
 		listView = (ListView) findViewById(R.id.listView1);
 		String text = getIntent().getStringExtra("text");
@@ -44,24 +59,54 @@ public class MessageActivity extends Activity {
 		// setListViewData();
 		// setListViewData2();
 
+		listView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> adapter, View view,
+					int position, long id) {
+				DeleteDialog.create(MessageActivity.this).show();
+				
+				Intent intent = new Intent("com.example.simpleui.delete.inner");
+				sendBroadcast(intent);
+				
+				// messages.get(position).deleteInBackground(new
+				// DeleteCallback() {
+				// @Override
+				// public void done(ParseException e) {
+				// queryDataFromParse();
+				// }
+				// });
+			}
+		});
+
 		queryDataFromParse();
 	}
 
+	@Override
+	protected void onDestroy() {
+		unregisterReceiver(deleteReceiver);
+		super.onDestroy();
+	}
+
 	private void queryDataFromParse() {
+		final ProgressDialog progress = new ProgressDialog(this);
+		progress.setTitle("Loading ...");
+		progress.show();
+
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Message");
 		query.orderByDescending("createdAt");
 		query.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> messages, ParseException e) {
+				MessageActivity.this.messages = messages;
+
 				String[] textList = new String[messages.size()];
 				String[] datatimeList = new String[messages.size()];
 
 				for (int i = 0; i < messages.size(); i++) {
 					textList[i] = messages.get(i).getString("text");
 					datatimeList[i] = messages.get(i).getCreatedAt().toString();
-					
-					Log.d("debug", messages.get(i).getCreatedAt().toString());
 				}
-				setListViewDataWithSimpleAdapter(textList, datatimeList);				
+				progress.dismiss();
+				setListViewDataWithSimpleAdapter(textList, datatimeList);
 			}
 		});
 
@@ -89,8 +134,9 @@ public class MessageActivity extends Activity {
 
 		setListViewDataWithSimpleAdapter(messages, messageDatetime);
 	}
-	
-	private void setListViewDataWithSimpleAdapter(String[] messages, String[] messageDatetime) {
+
+	private void setListViewDataWithSimpleAdapter(String[] messages,
+			String[] messageDatetime) {
 		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 		for (int i = 0; i < messages.length; i++) {
 			Map<String, String> item = new HashMap<String, String>();
@@ -112,7 +158,6 @@ public class MessageActivity extends Activity {
 
 		listView.setAdapter(adapter);
 	}
-
 
 	@SuppressWarnings("unused")
 	private void writeToFile(String text) {
@@ -149,5 +194,15 @@ public class MessageActivity extends Activity {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public class DeleteReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Toast.makeText(context,
+					"delete successfully [from inner receiver]",
+					Toast.LENGTH_SHORT).show();
+		}
 	}
 }
