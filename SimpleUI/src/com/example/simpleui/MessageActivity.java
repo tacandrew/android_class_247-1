@@ -51,7 +51,9 @@ public class MessageActivity extends Activity {
 		receiver = new MessageActivityReceiver();
 		registerReceiver(receiver, new IntentFilter(
 				"com.example.simpleui.delete"));
-
+		registerReceiver(receiver, new IntentFilter(
+				"com.example.simpleui.add"));
+		
 		listView = (ListView) findViewById(R.id.listView1);
 		String text = getIntent().getStringExtra("text");
 		boolean isChecked = getIntent().getBooleanExtra("checkbox", false);

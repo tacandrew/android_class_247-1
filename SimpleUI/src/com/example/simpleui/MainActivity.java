@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
 	private SharedPreferences sp;
 	private SharedPreferences.Editor editor;
 	private ProgressDialog progress;
-
+	
 	OnClickListener onClickListener = new OnClickListener() {
 
 		@Override
@@ -54,14 +54,14 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		Log.d("debug", "MainActivity onCreate");
-
+		
 		setContentView(R.layout.activity_main);
 
 		sp = getSharedPreferences("settings", Context.MODE_PRIVATE);
 		editor = sp.edit();
 
 		progress = new ProgressDialog(this);
-
+		
 		editText = (EditText) findViewById(R.id.editText1);
 		button = (Button) findViewById(R.id.button1);
 		button3 = (Button) findViewById(R.id.button3);
@@ -110,26 +110,26 @@ public class MainActivity extends Activity {
 	private void send() {
 		progress.setTitle("Loading ...");
 		progress.show();
-
+		
 		final String text;
 
-		if (checkBox.isChecked()
-				|| editText.getText().toString().contains("fuck")) {
+		if (checkBox.isChecked() || editText.getText().toString().contains("fuck")) {
 			text = "*******";
 		} else {
 			text = editText.getText().toString();
 		}
 
 		editText.setText("");
-
+		
 		JSONObject data = new JSONObject();
 		try {
 			data.put("action", "com.example.simpleui.push");
 			data.put("message", text);
+			data.put("alert", text);
 
 			ParsePush push = new ParsePush();
 			push.setChannel("all");
-			// push.setMessage(text);
+//			push.setMessage(text);
 			push.setData(data);
 			push.sendInBackground();
 
@@ -137,12 +137,14 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
+		
+		
+		
 		ParseObject messageObject = new ParseObject("Message");
 		messageObject.put("text", text);
 		messageObject.put("checkbox", checkBox.isChecked());
 		messageObject.saveInBackground(new SaveCallback() {
-
+			
 			@Override
 			public void done(ParseException e) {
 				progress.dismiss();
@@ -150,11 +152,11 @@ public class MainActivity extends Activity {
 				intent.setClass(MainActivity.this, MessageActivity.class);
 				intent.putExtra("text", text);
 				intent.putExtra("checkbox", checkBox.isChecked());
-				startActivity(intent);
+				startActivity(intent);				
 			}
 		});
-
-		// Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+		
+//		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 
 	}
 

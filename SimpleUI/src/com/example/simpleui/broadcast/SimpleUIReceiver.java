@@ -25,9 +25,9 @@ public class SimpleUIReceiver extends BroadcastReceiver {
 		if (action.equals("com.example.simpleui.push")) {
 			try {
 
-				String channel = intent.getExtras().getString(
+				String channel = intent.getStringExtra(
 						"com.parse.Channel");
-				JSONObject json = new JSONObject(intent.getExtras().getString(
+				JSONObject json = new JSONObject(intent.getStringExtra(
 						"com.parse.Data"));
 
 				Log.d(TAG, "got action " + action + " on channel " + channel
@@ -40,6 +40,9 @@ public class SimpleUIReceiver extends BroadcastReceiver {
 			} catch (JSONException e) {
 				Log.d(TAG, "JSONException: " + e.getMessage());
 			}
+			
+			Intent newIntent = new Intent("com.example.simpleui.add");
+			context.sendBroadcast(newIntent);
 		}
 
 	}
