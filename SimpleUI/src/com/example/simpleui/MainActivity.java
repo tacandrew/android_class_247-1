@@ -1,5 +1,6 @@
 package com.example.simpleui;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.json.JSONObject;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
@@ -86,7 +88,7 @@ public class MainActivity extends Activity {
 		textView = (TextView) findViewById(R.id.textView1);
 		spinner = (Spinner) findViewById(R.id.spinner1);
 		imageView = (ImageView) findViewById(R.id.imageView1);
-		
+
 		textView.setText("device id: " + getDeviceId());
 
 		button.setOnClickListener(new OnClickListener() {
@@ -212,6 +214,21 @@ public class MainActivity extends Activity {
 		send();
 	}
 
+	private void saveBitmapToParse(Bitmap bitmap) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+		byte[] bytes = baos.toByteArray();
+
+		final ParseFile file = new ParseFile("photo.png", bytes);
+		file.saveInBackground(new SaveCallback() {
+
+			@Override
+			public void done(ParseException e) {
+				Log.d("debug", "url:" + file.getUrl());
+			}
+		});
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -232,7 +249,7 @@ public class MainActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -240,6 +257,7 @@ public class MainActivity extends Activity {
 			if (resultCode == RESULT_OK) {
 				Bitmap bitmap = data.getParcelableExtra("data");
 				imageView.setImageBitmap(bitmap);
+				saveBitmapToParse(bitmap);
 			}
 		}
 	}
