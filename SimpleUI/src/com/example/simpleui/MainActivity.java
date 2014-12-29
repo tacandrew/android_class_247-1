@@ -18,7 +18,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings.Secure;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -31,6 +33,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
@@ -39,6 +42,7 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
+	private static final int REQUEST_CODE_CAMERA = 0;
 	private TextView textView;
 	private EditText editText;
 	private Button button, button3;
@@ -47,6 +51,7 @@ public class MainActivity extends Activity {
 	private SharedPreferences.Editor editor;
 	private ProgressDialog progress;
 	private Spinner spinner;
+	private ImageView imageView;
 
 	OnClickListener onClickListener = new OnClickListener() {
 
@@ -80,7 +85,8 @@ public class MainActivity extends Activity {
 		checkBox = (CheckBox) findViewById(R.id.checkBox1);
 		textView = (TextView) findViewById(R.id.textView1);
 		spinner = (Spinner) findViewById(R.id.spinner1);
-
+		imageView = (ImageView) findViewById(R.id.imageView1);
+		
 		textView.setText("device id: " + getDeviceId());
 
 		button.setOnClickListener(new OnClickListener() {
@@ -220,9 +226,21 @@ public class MainActivity extends Activity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_camera) {
-			Toast.makeText(this, "pressed camera", Toast.LENGTH_SHORT).show();
+			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			startActivityForResult(intent, REQUEST_CODE_CAMERA);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == REQUEST_CODE_CAMERA) {
+			if (resultCode == RESULT_OK) {
+				Bitmap bitmap = data.getParcelableExtra("data");
+				imageView.setImageBitmap(bitmap);
+			}
+		}
 	}
 }
