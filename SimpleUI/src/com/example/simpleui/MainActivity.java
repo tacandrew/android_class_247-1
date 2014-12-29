@@ -1,6 +1,7 @@
 package com.example.simpleui;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings.Secure;
@@ -55,6 +58,7 @@ public class MainActivity extends Activity {
 	private ProgressDialog progress;
 	private Spinner spinner;
 	private ImageView imageView;
+	private Uri photoUri;
 
 	OnClickListener onClickListener = new OnClickListener() {
 
@@ -133,6 +137,7 @@ public class MainActivity extends Activity {
 		});
 
 		loadDeviceId();
+		photoUri = getOutputUri();
 	}
 
 	private void loadDeviceId() {
@@ -216,6 +221,16 @@ public class MainActivity extends Activity {
 		send();
 	}
 
+	private Uri getOutputUri() {
+		File dir = Environment
+				.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+		if (dir.exists() != false) {
+			dir.mkdirs();
+		}
+		File file = new File(dir, "photo.png");
+		return Uri.fromFile(file);
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -231,6 +246,7 @@ public class MainActivity extends Activity {
 		int id = item.getItemId();
 		if (id == R.id.action_camera) {
 			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
 			startActivityForResult(intent, REQUEST_CODE_CAMERA);
 			return true;
 		}
@@ -242,8 +258,9 @@ public class MainActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == REQUEST_CODE_CAMERA) {
 			if (resultCode == RESULT_OK) {
-				bitmap = data.getParcelableExtra("data");
-				imageView.setImageBitmap(bitmap);
+//				bitmap = data.getParcelableExtra("data");
+//				imageView.setImageBitmap(bitmap);
+				imageView.setImageURI(photoUri);
 			}
 		}
 	}
