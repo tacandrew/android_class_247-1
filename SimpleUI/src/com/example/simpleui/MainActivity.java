@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings.Secure;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -26,9 +27,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
+	private TextView textView;
 	private EditText editText;
 	private Button button, button3;
 	private CheckBox checkBox;
@@ -66,7 +69,10 @@ public class MainActivity extends Activity {
 		button = (Button) findViewById(R.id.button1);
 		button3 = (Button) findViewById(R.id.button3);
 		checkBox = (CheckBox) findViewById(R.id.checkBox1);
+		textView = (TextView) findViewById(R.id.textView1);
 
+		textView.setText("device id: " + getDeviceId());
+		
 		button.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -160,6 +166,9 @@ public class MainActivity extends Activity {
 
 	}
 
+	private String getDeviceId() {
+		return Secure.getString(getContentResolver(), Secure.ANDROID_ID);
+	}
 	public void onClick(View view) {
 		send();
 	}
