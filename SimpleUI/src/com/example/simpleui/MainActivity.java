@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings.Secure;
 import android.util.Log;
@@ -62,6 +63,7 @@ public class MainActivity extends Activity {
 			send();
 		}
 	};
+	private Bitmap bitmap;
 
 	/*
 	 * (non-Javadoc)
@@ -166,7 +168,7 @@ public class MainActivity extends Activity {
 			text = editText.getText().toString();
 		}
 
-		editText.setText("");
+		editText.getText().clear();
 
 		JSONObject data = new JSONObject();
 		try {
@@ -180,15 +182,18 @@ public class MainActivity extends Activity {
 			// push.setMessage(text);
 			push.setData(data);
 			push.sendInBackground();
-
-		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
+
+		ParseFile file = new ParseFile("photo.png", Utils.bitmapToBytes(bitmap));
 
 		ParseObject messageObject = new ParseObject("Message");
 		messageObject.put("text", text);
 		messageObject.put("checkbox", checkBox.isChecked());
+		if (bitmap != null) {
+			messageObject.put("photo", file);
+		}
 		messageObject.saveInBackground(new SaveCallback() {
 
 			@Override
@@ -201,9 +206,6 @@ public class MainActivity extends Activity {
 				startActivity(intent);
 			}
 		});
-
-		// Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-
 	}
 
 	private String getDeviceId() {
@@ -212,21 +214,6 @@ public class MainActivity extends Activity {
 
 	public void onClick(View view) {
 		send();
-	}
-
-	private void saveBitmapToParse(Bitmap bitmap) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-		byte[] bytes = baos.toByteArray();
-
-		final ParseFile file = new ParseFile("photo.png", bytes);
-		file.saveInBackground(new SaveCallback() {
-
-			@Override
-			public void done(ParseException e) {
-				Log.d("debug", "url:" + file.getUrl());
-			}
-		});
 	}
 
 	@Override
@@ -255,9 +242,8 @@ public class MainActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == REQUEST_CODE_CAMERA) {
 			if (resultCode == RESULT_OK) {
-				Bitmap bitmap = data.getParcelableExtra("data");
+				bitmap = data.getParcelableExtra("data");
 				imageView.setImageBitmap(bitmap);
-				saveBitmapToParse(bitmap);
 			}
 		}
 	}
